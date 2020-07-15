@@ -1,4 +1,4 @@
-import React, { useState,useEffect  } from "react";
+import React, { useState,useEffect, Component  } from "react";
 import {useForm, appendErrors} from 'react-hook-form';
 import firebase from 'firebase';
 import { BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
@@ -16,9 +16,68 @@ const firebaseConfig = {
 };
 const firebaseImpl = firebase.initializeApp(firebaseConfig);
 const firebaseDatabase = firebase.database();
-export default function App() {
-  
 
+class AppTeste extends React.Component {
+  constructor(props) {
+    super(props);
+    this.database = firebaseImpl.database().ref(`/curriculos`);
+    this.state = {
+      value: 20,
+      data: [],
+    };
+  }
+
+  componentDidMount(){
+    this.database.on('value', snap =>{
+      this.setState({
+        data: Object.entries(snap.val()).map(([, value]) => value)
+      });
+    });
+  }
+
+  render() {
+    return (
+      <div>                 
+        <ul>
+          {this.state.data.map(item=> (
+            <li key={item.telefone}>
+              <p>{item.nome}</p>
+              <p>{item.email}</p>              
+              <Link to={{ pathname: "/users", state: { teste: item} }}>Consulta</Link>
+            </li>
+          ))};
+        </ul>
+      </div>
+    );
+  }
+}
+
+class Consulta extends React.Component {
+  constructor(props) {
+    super(props);
+    console.dir(props);
+    this.state = {
+      fromAppItem: props.location.state,
+    }
+  }
+  render() {
+    return (
+      <div>                 
+        <ul>         
+            <li>
+              <p>Nome: {this.state.fromAppItem.teste.nome}</p>
+              <p>Email: {this.state.fromAppItem.teste.email}</p>
+              <p>Telefone: {this.state.fromAppItem.teste.telefone}</p>
+              <p>Site: {this.state.fromAppItem.teste.site}</p>
+              <p>Experiencia: {this.state.fromAppItem.teste.experiencia}</p>
+            </li>          
+        </ul>
+      </div>
+    );
+  }
+}
+
+export default function App() {
   return (
     <Router>
       <div>
@@ -30,53 +89,20 @@ export default function App() {
             <li>
               <Link to="/cadastro">Cadastro</Link>
             </li>
-            <li>
-              <Link to="/users">Consulta</Link>
-            </li>
           </ul>
         </nav>
-
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
         <Switch>
           <Route path="/cadastro">
             <Cadastro />
           </Route>
-          <Route path="/users">
-            <Users />
-          </Route>
+          <Route path="/users" component={Consulta}/>
           <Route path="/">
-            <Home />
+            <AppTeste />
           </Route>
         </Switch>
       </div>
     </Router>
   );
-}
-
-// async function listaCurriculo(){
-//   const snapshot = await firebaseDatabase.ref(`/curriculos`);
-//   snapshot.limitToLast(20).once('value', async snap => {
-//     const result = Object.entries(snap.val()).map(([, value]) => value);
-//     console.log(result);
-//   });  
-// }
-
-function Home() {
-  const [isLoaded, setLoaded] = useState(true);
-  const [lista, setLista] = useState([]);  
-  
-  if(!isLoaded){
-    return <div><button onClick={null} >Atualizar</button>Loading...</div>;
-  }else{ 
-    return <div>
-      <h2>Home</h2>
-      <ul>
-        {  }
-      </ul>
-      <button onClick={null} >Atualizar</button>
-    </div> ;
-   }
 }
 
 function Cadastro() {
