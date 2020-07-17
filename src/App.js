@@ -5,14 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 import { render } from "@testing-library/react";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBa0Bmthv2h1NxkYh222wypUznCCeRIFC4",
-  authDomain: "cloudfunctions-7c349.firebaseapp.com",
-  databaseURL: "https://cloudfunctions-7c349.firebaseio.com",
-  projectId: "cloudfunctions-7c349",
-  storageBucket: "cloudfunctions-7c349.appspot.com",
-  messagingSenderId: "319887265067",
-  appId: "1:319887265067:web:931d3dbd3afc4851a2896e",
-  measurementId: "G-5JT7VWTEHS"
+  "your firebase config here"
 };
 const firebaseImpl = firebase.initializeApp(firebaseConfig);
 const firebaseDatabase = firebase.database();
